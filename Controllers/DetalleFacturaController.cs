@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,13 +26,33 @@ namespace Roles_Estructuras_Control.Controllers
         // GET: DetalleFactura
         public async Task<IActionResult> Index()
         {
-           return View();
+            return View();
         }
-       
+
 
         //# Nombre_Productos, Catidad, Precio Unitario, Total
 
+        // Acción para buscar productos
+        [HttpGet]
+        public async Task<IActionResult> buscarProducto(string term)
+        {
+            if (string.IsNullOrEmpty(term))
+            {
+                return BadRequest("El término de búsqueda no puede estar vacío.");
+            }
 
+            var productos = await _context.Productos
+                .Where(p => p.NombreProducto.Contains(term))
+                .Select(p => new
+                {
+                    p.Id,
+                    p.NombreProducto,
+
+                })
+                .ToListAsync();
+
+            return Json(productos);
+        }
 
         // GET: DetalleFactura/Details/5
         public async Task<IActionResult> Details(int? id)
